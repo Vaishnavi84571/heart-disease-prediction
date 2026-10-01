@@ -1,0 +1,7 @@
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+export default function Login() { const { login } = useAuth(); const nav=useNavigate(); const loc=useLocation(); const [email,setEmail]=useState(''); const [password,setPassword]=useState(''); const [error,setError]=useState(''); const [busy,setBusy]=useState(false)
+ const submit=async e=>{e.preventDefault();setError('');setBusy(true);try{await login(email,password);nav(loc.state?.from||'/dashboard')}catch(err){setError(err.response?.data?.detail||'Login failed.')}finally{setBusy(false)}}
+ return <AuthShell title="Welcome back" subtitle="Sign in to access your predictions and history."><form onSubmit={submit} className="form"><label>Email<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com"/></label><label>Password<input type="password" required value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••"/></label>{error&&<div className="error">{error}</div>}<button className="btn primary full" disabled={busy}>{busy?'Signing in…':'Sign in'}</button></form><p className="form-footer">New here? <Link to="/signup">Create an account</Link></p></AuthShell> }
+function AuthShell({title,subtitle,children}){return <div className="auth-page"><div className="auth-card"><div className="auth-logo">♥</div><h1>{title}</h1><p>{subtitle}</p>{children}</div></div>}
